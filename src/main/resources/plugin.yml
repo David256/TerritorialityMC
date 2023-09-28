@@ -11,3 +11,7 @@ commands:
   register:
     description: Register the user as landowner.
     usage: /register
+permissions:
+  territorialitymc.register:
+    description: Allows the user register as landowner
+    default: op
