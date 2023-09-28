@@ -61,7 +61,7 @@
       <recent name="co.superstuff" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TerritorialityMCPluginTest.onCommand">
+  <component name="RunManager" selected="Maven.TerritorialityMC [package]">
     <configuration name="TerritorialityMCPluginTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="TerritorialityMC" />
       <extension name="coverage">
