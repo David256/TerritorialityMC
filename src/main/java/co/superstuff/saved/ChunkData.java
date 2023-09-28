@@ -5,20 +5,20 @@ public class ChunkData {
 
     private int x;
     private int z;
-    private String territorialityId;
+    private String territoryId;
     private short life;
 
-    public ChunkData(int x, int z, String territorialityId, short life) {
+    public ChunkData(int x, int z, String territoryId, short life) {
         this.x = x;
         this.z = z;
-        this.territorialityId = territorialityId;
+        this.territoryId = territoryId;
         this.life = life;
     }
 
-    public ChunkData(int x, int z, String territorialityId) {
+    public ChunkData(int x, int z, String territoryId) {
         this.x = x;
         this.z = z;
-        this.territorialityId = territorialityId;
+        this.territoryId = territoryId;
         this.life = ChunkData.MAX_LIFE;
     }
 
@@ -38,12 +38,12 @@ public class ChunkData {
         this.z = z;
     }
 
-    public String getTerritorialityId() {
-        return territorialityId;
+    public String getTerritoryId() {
+        return territoryId;
     }
 
-    public void setTerritorialityId(String territorialityId) {
-        this.territorialityId = territorialityId;
+    public void setTerritoryId(String territoryId) {
+        this.territoryId = territoryId;
     }
 
     public short getLife() {
