@@ -1,0 +1,6 @@
+name: TerritorialityMC
+version: ${project.version}
+main: co.superstuff.TerritorialityMCPlugin
+api-version: '1.20'
+authors: [David Waster]
+description: A plugin to claim territories and fight for them.
