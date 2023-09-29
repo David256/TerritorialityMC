@@ -18,7 +18,7 @@ class TerritoryDataTest {
     @BeforeEach
     void setUp() {
         firstTerritoryId = "id-001";
-        territoryData = new TerritoryData("id-001", "territory-1", "user-100", new ArrayList<ChunkData>(){
+        territoryData = new TerritoryData("id-001", "territory-1", "user-100", new ArrayList<>(){
             {
                 add(new ChunkData(10, 10, firstTerritoryId));
                 add(new ChunkData(30, 40, firstTerritoryId));
@@ -107,7 +107,7 @@ class TerritoryDataTest {
         ArrayList<ChunkData> chunkDataArrayListUpdated = (ArrayList<ChunkData>) territoryData.getChunkDataList();
         assertEquals(4, chunkDataArrayListUpdated.size());
 
-        assertEquals(300, ((ArrayList<ChunkData>) territoryData.getChunkDataList()).get(3).getX());
-        assertEquals(-300, ((ArrayList<ChunkData>) territoryData.getChunkDataList()).get(3).getZ());
+        assertEquals(300, (territoryData.getChunkDataList()).get(3).getX());
+        assertEquals(-300, (territoryData.getChunkDataList()).get(3).getZ());
     }
 }

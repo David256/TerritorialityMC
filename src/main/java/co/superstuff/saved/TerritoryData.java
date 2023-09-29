@@ -21,7 +21,7 @@ public class TerritoryData {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
-        this.chunkDataList = new ArrayList<ChunkData>();
+        this.chunkDataList = new ArrayList<>();
     }
 
     public TerritoryData(String name, String ownerId, List<ChunkData> chunkDataList) {
@@ -35,7 +35,7 @@ public class TerritoryData {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.ownerId = ownerId;
-        this.chunkDataList = new ArrayList<ChunkData>();
+        this.chunkDataList = new ArrayList<>();
     }
 
     public String getId() {
