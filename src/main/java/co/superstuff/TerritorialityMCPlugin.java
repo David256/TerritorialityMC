@@ -1,8 +1,10 @@
 package co.superstuff;
+import co.superstuff.utils.plugin.CustomConfig;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,6 +13,11 @@ public class TerritorialityMCPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         System.out.println("Territoriality is on");
+
+        CustomConfig.setUp(this);
+        YamlConfiguration config = CustomConfig.get();
+        int maxTerritories = config.getInt("max-territories");
+        System.out.println("max of territories is: " + maxTerritories);
     }
 
     @Override
