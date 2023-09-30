@@ -9,52 +9,19 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.util.Map;
 
-public class UserDataLoader {
-    private final File file;
-    private final Yaml yaml;
-    private Map<String, UserData> userDataMap;
+public class UserDataLoader extends FileDataLoader<String, UserData> {
+    private final DataLoader<String, UserData> dataLoader;
     public UserDataLoader(File file) {
-        this.file = file;
-        yaml = new Yaml();
+        super(file);
+
+        dataLoader = new DataLoader<>();
 
         reload();
     }
 
-    public void reload() {
-        try {
-            InputStream is = new FileInputStream(file);
-            userDataMap = yaml.load(is);
-
-            if (userDataMap == null) {
-                System.err.println("Cannot load user data from:" + file.getPath());
-            } else if (userDataMap.isEmpty()) {
-                System.err.println("Warn: user data is empty. If it is the first time, ignore please");
-            }
-
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void save() {
-        String content = yaml.dump(userDataMap);
-        try {
-            OutputStream os = new FileOutputStream(this.file);
-
-            os.write(content.getBytes());
-
-            os.close();
-
-            System.out.println("File" + this.file.getPath() + "updated");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Nullable
     public UserData findUserById(String id) {
-        return userDataMap.get(id);
+        return dataLoader.get().get(id);
     }
 
     public void addUser(Player player, TerritoryData territoryData) {
@@ -65,8 +32,9 @@ public class UserDataLoader {
                 territoryData.getId()
         );
 
+        Map<String, UserData> userDataMap = dataLoader.get();
         userDataMap.put(uid, userData);
-
+        dataLoader.update(userDataMap);
         save();
     }
 }
