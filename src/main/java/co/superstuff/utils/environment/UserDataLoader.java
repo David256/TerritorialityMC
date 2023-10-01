@@ -39,7 +39,7 @@ public class UserDataLoader extends DataLoader {
 
         config.set(userId + ".id", userId);
         config.set(userId + ".username", userData.getUsername());
-        config.set(userId + "territoryId", userData.getTerritoryId());
+        config.set(userId + ".territoryId", userData.getTerritoryId());
 
         save();
 
