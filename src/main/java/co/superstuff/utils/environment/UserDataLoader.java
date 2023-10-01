@@ -3,25 +3,23 @@ package co.superstuff.utils.environment;
 import co.superstuff.saved.TerritoryData;
 import co.superstuff.saved.UserData;
 import org.bukkit.entity.Player;
-import org.yaml.snakeyaml.Yaml;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.Map;
 
-public class UserDataLoader extends FileDataLoader<String, UserData> {
-    private final DataLoader<String, UserData> dataLoader;
-    public UserDataLoader(File file) {
-        super(file);
+public class UserDataLoader extends DataLoader {
+    public UserDataLoader(JavaPlugin plugin) {
+        super(new File(plugin.getDataFolder(), "users.yml"));
+    }
 
-        dataLoader = new DataLoader<>();
-
-        reload();
+    public UserDataLoader(File dataFile) {
+        super(dataFile);
     }
 
     @Nullable
     public UserData findUserById(String id) {
-        return dataLoader.get().get(id);
+        return null;
     }
 
     public void addUser(Player player, TerritoryData territoryData) {
@@ -32,9 +30,5 @@ public class UserDataLoader extends FileDataLoader<String, UserData> {
                 territoryData.getId()
         );
 
-        Map<String, UserData> userDataMap = dataLoader.get();
-        userDataMap.put(uid, userData);
-        dataLoader.update(userDataMap);
-        save();
     }
 }
