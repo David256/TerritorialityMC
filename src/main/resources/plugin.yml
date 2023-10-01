@@ -10,7 +10,7 @@ commands:
     usage: /help
   register:
     description: Register the user as landowner.
-    usage: /register
+    usage: /register <name>
 permissions:
   territorialitymc.register:
     description: Allows the user register as landowner
