@@ -9,12 +9,12 @@ import javax.annotation.Nullable;
 import java.io.*;
 
 public class UserDataLoader extends DataLoader {
-    public UserDataLoader(JavaPlugin plugin) {
-        super(new File(plugin.getDataFolder(), "users.yml"));
-    }
-
     public UserDataLoader(File dataFile) {
         super(dataFile);
+    }
+
+    public static UserDataLoader fromDefault(JavaPlugin plugin) {
+        return new UserDataLoader(new File(plugin.getDataFolder(), "users.yml"));
     }
 
     @Nullable
@@ -22,13 +22,27 @@ public class UserDataLoader extends DataLoader {
         return null;
     }
 
-    public void addUser(Player player, TerritoryData territoryData) {
+    public UserData addUser(Player player, TerritoryData territoryData) {
         String uid = player.getUniqueId().toString();
+        return addUser(uid, player.getName(), territoryData.getId());
+    }
+
+    public UserData addUser(String playerId, String playerName, String territoryId) {
         UserData userData = new UserData(
-                uid,
-                player.getName(),
-                territoryData.getId()
+                playerId,
+                playerName,
+                territoryId
         );
 
+        String userId = userData.getId();
+        System.out.println("Creating user Id: " + userId);
+
+        config.set(userId + ".id", userId);
+        config.set(userId + ".username", userData.getUsername());
+        config.set(userId + "territoryId", userData.getTerritoryId());
+
+        save();
+
+        return userData;
     }
 }

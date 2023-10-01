@@ -20,8 +20,15 @@ public abstract class DataLoader {
 
 
     public DataLoader(File file) {
+        this.file = file;
         config = new YamlConfiguration();
 
+        avoidNonExistentFile(file);
+
+        reload();
+    }
+
+    public void avoidNonExistentFile(File file) {
         if (!file.exists()) {
             /*
              * Create the plugin folder
@@ -38,8 +45,6 @@ public abstract class DataLoader {
                 e.printStackTrace();
             }
         }
-
-        reload();
     }
 
     public void save() {

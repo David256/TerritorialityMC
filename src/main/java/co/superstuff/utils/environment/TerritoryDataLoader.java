@@ -12,8 +12,10 @@ import java.util.Set;
 
 public class TerritoryDataLoader extends DataLoader {
 
-    public TerritoryDataLoader(JavaPlugin plugin) {
-        super(new File(plugin.getDataFolder(), "territories.yml"));
+    public static TerritoryDataLoader fromDefault(JavaPlugin plugin) {
+        File file = new File(plugin.getDataFolder(), "territories.yml");
+        System.out.println("Will load Territory Data from " + file.getPath());
+        return new TerritoryDataLoader(file);
     }
 
     public TerritoryDataLoader(File dataFile) {
