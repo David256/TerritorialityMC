@@ -1,8 +1,6 @@
 package co.superstuff.saved;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TerritoryData {
     private String id;
