@@ -1,23 +1,43 @@
 package co.superstuff;
+import co.superstuff.commands.RegistrationProcess;
+import co.superstuff.utils.environment.TerritoryDataLoader;
+import co.superstuff.utils.environment.UserDataLoader;
 import co.superstuff.utils.plugin.CustomConfig;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 public class TerritorialityMCPlugin extends JavaPlugin {
+
+    RegistrationProcess registrationProcess;
+
+    private TerritoryDataLoader territoryDataLoader;
+
+    private UserDataLoader userDataLoader;
 
     @Override
     public void onEnable() {
         System.out.println("Territoriality is on");
 
+        territoryDataLoader = TerritoryDataLoader.fromDefault(this);
+        userDataLoader = UserDataLoader.fromDefault(this);
+
+        registrationProcess = new RegistrationProcess(this);
+
         CustomConfig.setUp(this);
         YamlConfiguration config = CustomConfig.get();
         int maxTerritories = config.getInt("max-territories");
         System.out.println("max of territories is: " + maxTerritories);
+
+        Objects.requireNonNull(getCommand("register")).setExecutor(registrationProcess);
+
+        Runnable runnable = () -> {
+            Bukkit.getServer().broadcastMessage("Pues venga");
+        };
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, 2L * 20);
     }
 
     @Override
@@ -25,17 +45,11 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         System.out.println("Territoriality is off");
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("register")) {
-            if (sender instanceof Player player) {
-                player.sendMessage("Register...");
-            } else if (sender instanceof ConsoleCommandSender) {
-                sender.sendMessage("Only user can call this command");
-            } else if (sender instanceof BlockCommandSender) {
-                System.out.println("The command /register was run by a command block");
-            }
-        }
-        return true;
+    public TerritoryDataLoader getTerritoryDataLoader() {
+        return territoryDataLoader;
+    }
+
+    public UserDataLoader getUserDataLoader() {
+        return userDataLoader;
     }
 }
