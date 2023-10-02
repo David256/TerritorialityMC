@@ -143,7 +143,11 @@ public class Territory implements Mappable {
         return map;
     }
 
+    @Nullable
     static public Territory fromMap(Map<?, ?> map) {
+        if (map == null) {
+            return null;
+        }
 
         String id = (String) map.get("id");
         String name = (String) map.get("name");
