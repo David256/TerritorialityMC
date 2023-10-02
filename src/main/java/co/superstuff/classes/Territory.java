@@ -50,6 +50,7 @@ public class Territory implements Mappable {
 
         persistent.set(territory.getId(), map);
         persistent.save();
+        persistent.reload();
 
         return territory;
     }

@@ -28,6 +28,7 @@ public class Member implements Mappable {
 
         persistent.set(member.getId(), map);
         persistent.save();
+        persistent.reload();
 
         return member;
     }
