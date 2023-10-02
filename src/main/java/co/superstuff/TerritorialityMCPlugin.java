@@ -86,7 +86,6 @@ public class TerritorialityMCPlugin extends JavaPlugin {
             } else {
                 territories.add(territory);
                 System.out.println("loads territory: " + territory.getName());
-                System.out.println(territory);
             }
         });
 
