@@ -1,28 +1,36 @@
 package co.superstuff;
+import co.superstuff.classes.Member;
+import co.superstuff.classes.PersistentManager;
+import co.superstuff.classes.Territory;
 import co.superstuff.commands.RegistrationProcess;
-import co.superstuff.utils.environment.TerritoryDataLoader;
-import co.superstuff.utils.environment.UserDataLoader;
 import co.superstuff.utils.plugin.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class TerritorialityMCPlugin extends JavaPlugin {
 
     RegistrationProcess registrationProcess;
 
-    private TerritoryDataLoader territoryDataLoader;
-
-    private UserDataLoader userDataLoader;
+    private List<Territory> territories;
+    private List<Member> members;
+    private PersistentManager territoryPersistentManager;
+    private PersistentManager memberPersistentManager;
 
     @Override
     public void onEnable() {
         System.out.println("Territoriality is on");
 
-        territoryDataLoader = TerritoryDataLoader.fromDefault(this);
-        userDataLoader = UserDataLoader.fromDefault(this);
+        territories = new ArrayList<>();
+        members = new ArrayList<>();
+
+        territoryPersistentManager = new PersistentManager(new File(getDataFolder(), "territories.yml"));
+        memberPersistentManager = new PersistentManager(new File(getDataFolder(), "users.yml"));
 
         registrationProcess = new RegistrationProcess(this);
 
@@ -45,11 +53,19 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         System.out.println("Territoriality is off");
     }
 
-    public TerritoryDataLoader getTerritoryDataLoader() {
-        return territoryDataLoader;
+    public List<Territory> getTerritories() {
+        return territories;
     }
 
-    public UserDataLoader getUserDataLoader() {
-        return userDataLoader;
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public PersistentManager getTerritoryPersistentManager() {
+        return territoryPersistentManager;
+    }
+
+    public PersistentManager getMemberPersistentManager() {
+        return memberPersistentManager;
     }
 }
