@@ -5,13 +5,13 @@ import co.superstuff.classes.Territory;
 import co.superstuff.commands.RegistrationProcess;
 import co.superstuff.utils.plugin.CustomConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.concurrent.Immutable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TerritorialityMCPlugin extends JavaPlugin {
 
@@ -31,6 +31,9 @@ public class TerritorialityMCPlugin extends JavaPlugin {
 
         territoryPersistentManager = new PersistentManager(new File(getDataFolder(), "territories.yml"));
         memberPersistentManager = new PersistentManager(new File(getDataFolder(), "users.yml"));
+
+        reloadTerritories();
+        reloadMembers();
 
         registrationProcess = new RegistrationProcess(this);
 
@@ -67,5 +70,47 @@ public class TerritorialityMCPlugin extends JavaPlugin {
 
     public PersistentManager getMemberPersistentManager() {
         return memberPersistentManager;
+    }
+
+    public void reloadTerritories() {
+        Set<String> territoryKeySet = territoryPersistentManager.getConfig().getKeys(false);
+        territoryKeySet.forEach(territoryId -> {
+            MemorySection thing = (MemorySection) territoryPersistentManager.getConfig().get(territoryId);
+            if (thing == null) {
+                return;
+            }
+            Map<?, ?> item = (Map<?, ?>) thing.getValues(true);
+
+            Territory territory = Territory.fromMap(item);
+            if (territory == null) {
+                System.err.println("Cannot load territory");
+            } else {
+                territories.add(territory);
+                System.out.println("loads territory: " + territory.getName());
+                System.out.println(territory);
+            }
+        });
+
+        System.out.println(territories.size() + " territories loaded");
+    }
+
+    public void reloadMembers() {
+        memberPersistentManager.getConfig().getKeys(false).forEach(memberId -> {
+            MemorySection thing = (MemorySection) memberPersistentManager.getConfig().get(memberId);
+            if (thing == null) {
+                return;
+            }
+
+            Map<?, ?> item = (Map<?, ?>) thing.getValues(true);
+            Member member = Member.fromMap(item);
+            if (member == null) {
+                System.err.println("Cannot load member");
+            } else {
+                members.add(member);
+                System.out.println("Loads member: " + member.getName());
+            }
+        });
+
+        System.out.println(members.size() + " members loaded");
     }
 }

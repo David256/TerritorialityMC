@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Member implements Mappable {
+public class Member implements Mappable, Writable {
     private String id;
     private String name;
     private String territoryId;
@@ -24,13 +24,18 @@ public class Member implements Mappable {
                 territory.getId()
         );
 
-        Map<String, Object> map = member.dumpAsMap();
-
-        persistent.set(member.getId(), map);
-        persistent.save();
-        persistent.reload();
+        member.write(persistent);
 
         return member;
+    }
+
+    public static Member create(Player player, Territory territory) {
+
+        return new Member(
+                player.getUniqueId().toString(),
+                player.getName(),
+                territory.getId()
+        );
     }
 
     public String getId() {
@@ -55,6 +60,13 @@ public class Member implements Mappable {
 
     public void setTerritoryId(String territoryId) {
         this.territoryId = territoryId;
+    }
+
+    @Override
+    public void write(PersistentManager persistent) {
+        Map<String, Object> map = dumpAsMap();
+        persistent.set(id, map);
+        persistent.reload();
     }
 
     @Override

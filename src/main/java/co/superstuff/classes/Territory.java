@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class Territory implements Mappable {
+public class Territory implements Mappable, Writable {
     private String id;
     private String name;
     private String ownerId;
@@ -46,14 +46,19 @@ public class Territory implements Mappable {
 
     public static Territory create(PersistentManager persistent, String name, Player player) {
         Territory territory = new Territory(name, player.getUniqueId().toString());
-
-        Map<String, Object> map = territory.dumpAsMap();
-
-        persistent.set(territory.getId(), map);
-        persistent.save();
-        persistent.reload();
-
+        territory.write(persistent);
         return territory;
+    }
+
+    public static Territory create(String name, Player player) {
+        return new Territory(name, player.getUniqueId().toString());
+    }
+
+    @Override
+    public void write(PersistentManager persistent) {
+        Map<String, Object> map = dumpAsMap();
+        persistent.set(id, map);
+        persistent.reload();
     }
 
     @Nullable
