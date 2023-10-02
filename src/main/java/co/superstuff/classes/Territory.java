@@ -44,6 +44,18 @@ public class Territory implements Mappable, Writable {
         this.members = members;
     }
 
+    @Override
+    public String toString() {
+        return "Territory{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", ownerId='" + ownerId + '\'' +
+                ", mainPlot=" + mainPlot +
+                ", extensionPlots.size()=" + extensionPlots.size() +
+                ", members.size()=" + members.size() +
+                '}';
+    }
+
     public static Territory create(PersistentManager persistent, String name, Player player) {
         Territory territory = new Territory(name, player.getUniqueId().toString());
         territory.write(persistent);

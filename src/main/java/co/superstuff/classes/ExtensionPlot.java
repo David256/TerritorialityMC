@@ -15,6 +15,17 @@ public class ExtensionPlot extends Plot {
         super(x, z, life, territoryId, chunks);
     }
 
+    @Override
+    public String toString() {
+        return "ExtensionPlot{" +
+                "x=" + x +
+                ", z=" + z +
+                ", life=" + life +
+                ", chunks.size()=" + chunks.size() +
+                ", territoryId='" + territoryId + '\'' +
+                '}';
+    }
+
     @Nullable
     static ExtensionPlot fromMap(Map<?, ?> map) {
         if (map == null) {

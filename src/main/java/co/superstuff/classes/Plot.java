@@ -28,6 +28,17 @@ abstract public class Plot implements Mappable {
         this.territoryId = territoryId;
     }
 
+    @Override
+    public String toString() {
+        return "Plot{" +
+                "x=" + x +
+                ", z=" + z +
+                ", life=" + life +
+                ", chunks.size()=" + chunks.size() +
+                ", territoryId='" + territoryId + '\'' +
+                '}';
+    }
+
     public int getX() {
         return x;
     }

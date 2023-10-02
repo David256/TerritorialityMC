@@ -17,6 +17,14 @@ public class PersistentManager {
         reload();
     }
 
+    @Override
+    public String toString() {
+        return "PersistentManager{" +
+                "file=" + file +
+                ", config=" + config +
+                '}';
+    }
+
     public void reload() {
         config = YamlConfiguration.loadConfiguration(file);
     }

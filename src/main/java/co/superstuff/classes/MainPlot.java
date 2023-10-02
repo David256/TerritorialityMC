@@ -15,6 +15,17 @@ public class MainPlot extends Plot {
         super(x, z, life, territoryId, chunks);
     }
 
+    @Override
+    public String toString() {
+        return "MainPlot{" +
+                "x=" + x +
+                ", z=" + z +
+                ", life=" + life +
+                ", chunks.size()=" + chunks.size() +
+                ", territoryId='" + territoryId + '\'' +
+                '}';
+    }
+
     @Nullable
     static MainPlot fromMap(Map<?, ?> map) {
         if (map == null) {

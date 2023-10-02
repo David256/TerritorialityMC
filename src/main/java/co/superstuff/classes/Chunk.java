@@ -13,6 +13,14 @@ public class Chunk implements Mappable {
         this.z = z;
     }
 
+    @Override
+    public String toString() {
+        return "Chunk{" +
+                "x=" + x +
+                ", z=" + z +
+                '}';
+    }
+
     public int getX() {
         return x;
     }

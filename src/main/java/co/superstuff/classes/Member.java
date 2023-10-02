@@ -38,6 +38,15 @@ public class Member implements Mappable, Writable {
         );
     }
 
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", territoryId='" + territoryId + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }
