@@ -69,7 +69,7 @@ public class Member implements Mappable {
     }
 
     @Nullable
-    static Member fromMap(Map<?, ?> map) {
+    public static Member fromMap(Map<?, ?> map) {
         if (map == null) {
             return null;
         }
