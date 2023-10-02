@@ -56,7 +56,7 @@ public class RegistrationProcess implements CommandExecutor {
         // Code here...
         String ownerId = player.getUniqueId().toString();
 
-        Territory territory = Territory.findByOwnerId(plugin.getMemberPersistentManager(), ownerId);
+        Territory territory = Territory.findByOwnerId(plugin.getTerritoryPersistentManager(), ownerId);
         if (territory == null) {
 
             territory = Territory.create(plugin.getTerritoryPersistentManager(), territoryName, player);
