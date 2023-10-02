@@ -17,7 +17,7 @@ public class PersistentManager {
         reload();
     }
 
-    private void reload() {
+    public void reload() {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
