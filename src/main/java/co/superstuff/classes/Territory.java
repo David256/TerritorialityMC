@@ -1,5 +1,6 @@
 package co.superstuff.classes;
 
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -148,6 +149,7 @@ public class Territory implements Mappable {
     @Nullable
     static public Territory fromMap(Map<?, ?> map) {
         if (map == null) {
+            System.err.println("Territory.fromMap receives null");
             return null;
         }
 

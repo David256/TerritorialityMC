@@ -71,6 +71,7 @@ public class Member implements Mappable {
     @Nullable
     public static Member fromMap(Map<?, ?> map) {
         if (map == null) {
+            System.err.println("Member.fromMap receives null");
             return null;
         }
 
