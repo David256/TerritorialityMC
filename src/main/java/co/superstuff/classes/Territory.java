@@ -59,17 +59,18 @@ public class Territory implements Mappable {
     public static Territory findByOwnerId(PersistentManager persistent, String ownerId) {
         Set<String> set = persistent.getConfig().getKeys(false);
 
-        for (String territoryId :
-                set) {
+        for (String territoryId : set) {
             String foundOwnerId = persistent.getConfig().getString(territoryId + ".ownerId");
 
             if (foundOwnerId != null && foundOwnerId.equals(ownerId)) {
-                Map<?, ?> territoryMap = persistent.getConfig().getObject(territoryId, Map.class);
-                if (territoryMap == null) {
+                MemorySection memorySection = (MemorySection) persistent.getConfig().get(territoryId);
+                if (memorySection == null) {
                     System.err.println("caught territory for id: " + territoryId + " was null");
+                    System.err.println("new finding returned null whiling a MemorySection was founded");
                     return null;
                 }
-                return Territory.fromMap(territoryMap);
+                Map<String, Object> maybeTerritory = memorySection.getValues(true);
+                return Territory.fromMap(maybeTerritory);
             }
         }
 
