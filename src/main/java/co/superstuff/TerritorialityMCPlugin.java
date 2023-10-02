@@ -9,7 +9,6 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.File;
 import java.util.*;
 
@@ -79,7 +78,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
             if (thing == null) {
                 return;
             }
-            Map<?, ?> item = (Map<?, ?>) thing.getValues(true);
+            Map<String, Object> item = thing.getValues(true);
 
             Territory territory = Territory.fromMap(item);
             if (territory == null) {
@@ -101,7 +100,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
                 return;
             }
 
-            Map<?, ?> item = (Map<?, ?>) thing.getValues(true);
+            Map<String, Object> item = thing.getValues(true);
             Member member = Member.fromMap(item);
             if (member == null) {
                 System.err.println("Cannot load member");

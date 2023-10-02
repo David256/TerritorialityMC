@@ -19,8 +19,8 @@ public class Territory implements Mappable, Writable {
                 name,
                 ownerId,
                 null,
-                new ArrayList<ExtensionPlot>(),
-                new ArrayList<Member>()
+                new ArrayList<>(),
+                new ArrayList<>()
         );
     }
 
