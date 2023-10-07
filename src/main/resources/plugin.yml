@@ -5,12 +5,9 @@ api-version: '1.20'
 authors: [David Waster]
 description: A plugin to claim territories and fight for them.
 commands:
-  help:
-    description: Show the help message.
-    usage: /help
-  register:
-    description: Register the user as landowner.
-    usage: /register <name>
+  tmc:
+    description: Use the Territoriality MC plugin command
+    usage: /tmc <command>
 permissions:
   territorialitymc.register:
     description: Allows the user register as landowner

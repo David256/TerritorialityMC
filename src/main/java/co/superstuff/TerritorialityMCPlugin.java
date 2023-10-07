@@ -41,7 +41,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         int maxTerritories = config.getInt("max-territories");
         System.out.println("max of territories is: " + maxTerritories);
 
-        Objects.requireNonNull(getCommand("register")).setExecutor(registrationProcess);
+        Objects.requireNonNull(getCommand("tmc")).setExecutor(registrationProcess);
 
         Runnable runnable = () -> {
             Bukkit.getServer().broadcastMessage("Pues venga");

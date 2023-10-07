@@ -19,26 +19,19 @@ public class RegistrationProcess implements CommandExecutor {
         if (sender instanceof Player player) {
 
             if (strings.length == 0) {
-                player.sendMessage(ChatColor.DARK_PURPLE + "Name! I need the name");
-                player.sendMessage(ChatColor.GREEN + "Please, give the territory name:");
-                return false;
+                printUsage(player);
+                return true;
             }
 
-            String territoryName = String.join(" ", strings);
-            Territory territory = registerPlayer(player, territoryName);
-
-            if (territory != null) {
-                // Join the user to this territory
-                Member member = Member.create(plugin.getMemberPersistentManager(), player, territory);
-                System.out.println("Add as member to " + member.getName());
-
-                plugin.getMembers().add(member);
-                plugin.getTerritories().add(territory);
-
-                player.sendMessage(ChatColor.YELLOW + "You have been joined to " + territory.getName());
+            switch (command.getName()) {
+                case "register":
+                    return onCommandRegister(player, command, s, strings);
+                default:
+                    printUsage(player);
+                    return true;
             }
 
-            return true;
+
 
         } else if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage("Only user can call this command");
@@ -70,5 +63,34 @@ public class RegistrationProcess implements CommandExecutor {
             return null;
 
         }
+    }
+
+    private boolean onCommandRegister(Player player, Command command, String s, String[] strings) {
+        if (strings.length == 1) {
+            player.sendMessage(ChatColor.DARK_PURPLE + "Name! I need the name");
+            player.sendMessage(ChatColor.GREEN + "Please, give the territory name:");
+            return false;
+        }
+
+        String territoryName = String.join(" ", strings);
+        Territory territory = registerPlayer(player, territoryName);
+
+        if (territory != null) {
+            // Join the user to this territory
+            Member member = Member.create(plugin.getMemberPersistentManager(), player, territory);
+            System.out.println("Add as member to " + member.getName());
+
+            plugin.getMembers().add(member);
+            plugin.getTerritories().add(territory);
+
+            player.sendMessage(ChatColor.YELLOW + "You have been joined to " + territory.getName());
+        }
+
+        return true;
+    }
+
+    private void printUsage(Player player) {
+        player.sendMessage("Usage of the command /tmc:");
+        player.sendMessage("    register - Register the user as landowner.");
     }
 }
