@@ -2,7 +2,7 @@ package co.superstuff;
 import co.superstuff.classes.Member;
 import co.superstuff.classes.PersistentManager;
 import co.superstuff.classes.Territory;
-import co.superstuff.commands.RegistrationProcess;
+import co.superstuff.commands.CommandTMC;
 import co.superstuff.utils.plugin.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -15,7 +15,7 @@ import java.util.*;
 
 public class TerritorialityMCPlugin extends JavaPlugin {
 
-    RegistrationProcess registrationProcess;
+    CommandTMC commandTMC;
 
     private List<Territory> territories;
     private List<Member> members;
@@ -35,7 +35,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         reloadTerritories();
         reloadMembers();
 
-        registrationProcess = new RegistrationProcess(this);
+        commandTMC = new CommandTMC(this);
 
         CustomConfig.setUp(this);
         YamlConfiguration config = CustomConfig.get();
@@ -43,8 +43,8 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         System.out.println("max of territories is: " + maxTerritories);
 
         PluginCommand tmcCommand = getCommand("tmc");
-        Objects.requireNonNull(tmcCommand).setExecutor(registrationProcess);
-        Objects.requireNonNull(tmcCommand).setTabCompleter(registrationProcess);
+        Objects.requireNonNull(tmcCommand).setExecutor(commandTMC);
+        Objects.requireNonNull(tmcCommand).setTabCompleter(commandTMC);
 
         Runnable runnable = () -> {
             Bukkit.getServer().broadcastMessage("Pues venga");

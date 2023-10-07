@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistrationProcess implements CommandExecutor, TabCompleter {
+public class CommandTMC implements CommandExecutor, TabCompleter {
     private final TerritorialityMCPlugin plugin;
 
-    public RegistrationProcess(TerritorialityMCPlugin plugin) {
+    public CommandTMC(TerritorialityMCPlugin plugin) {
         this.plugin = plugin;
     }
 
