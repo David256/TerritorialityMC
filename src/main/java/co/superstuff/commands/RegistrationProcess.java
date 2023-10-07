@@ -7,11 +7,31 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class RegistrationProcess implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class RegistrationProcess implements CommandExecutor, TabCompleter {
     private final TerritorialityMCPlugin plugin;
 
     public RegistrationProcess(TerritorialityMCPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] strings) {
+        List<String> hints = new ArrayList<>();
+
+        if (strings.length == 1) {
+            hints.add("register");
+            hints.add("help");
+        } else if (strings.length == 2) {
+            if (strings[0].equals("register")) {
+                hints.add("<territory name>");
+            }
+            System.out.println(strings[0]);
+        }
+
+        return hints;
     }
 
     @Override
@@ -23,7 +43,7 @@ public class RegistrationProcess implements CommandExecutor {
                 return true;
             }
 
-            switch (command.getName()) {
+            switch (strings[0]) {
                 case "register":
                     return onCommandRegister(player, command, s, strings);
                 default:

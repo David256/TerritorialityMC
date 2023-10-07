@@ -5,6 +5,7 @@ import co.superstuff.classes.Territory;
 import co.superstuff.commands.RegistrationProcess;
 import co.superstuff.utils.plugin.CustomConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,7 +42,9 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         int maxTerritories = config.getInt("max-territories");
         System.out.println("max of territories is: " + maxTerritories);
 
-        Objects.requireNonNull(getCommand("tmc")).setExecutor(registrationProcess);
+        PluginCommand tmcCommand = getCommand("tmc");
+        Objects.requireNonNull(tmcCommand).setExecutor(registrationProcess);
+        Objects.requireNonNull(tmcCommand).setTabCompleter(registrationProcess);
 
         Runnable runnable = () -> {
             Bukkit.getServer().broadcastMessage("Pues venga");
