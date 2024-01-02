@@ -122,7 +122,7 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
         } else {
             if (!(sender instanceof Player player)) {
                 sender.sendMessage(ChatColor.GOLD + "This command is for player");
-                sender.sendMessage(ChatColor.GOLD + "But you can use /delete <id|owner> <value>");
+                sender.sendMessage(ChatColor.GOLD + "But you can use /tmc delete <id|owner> <value>");
                 return true;
             }
 
@@ -166,6 +166,8 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
     private boolean helpCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage(ChatColor.GOLD + "Usage of the command /tmc:");
         sender.sendMessage(ChatColor.GOLD + "    register - Register the user as landowner.");
+        sender.sendMessage(ChatColor.GOLD + "    delete <id|owner> <value> - delete a territory");
+        sender.sendMessage(ChatColor.GOLD + "    help - shows this message");
         return true;
     }
 }
