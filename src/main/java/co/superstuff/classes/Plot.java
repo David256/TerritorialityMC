@@ -28,6 +28,7 @@ abstract public class Plot implements ConfigurationSerializable {
     public Plot(int x, int z, int life, String territoryId, List<Chunk> chunks) {
         this(x, z, life, territoryId);
         this.territoryId = territoryId;
+        this.chunks = chunks;
     }
 
     @Override
