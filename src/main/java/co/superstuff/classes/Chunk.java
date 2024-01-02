@@ -4,14 +4,15 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SerializableAs("Chunk")
 public class Chunk implements ConfigurationSerializable {
-    int x;
-    int z;
+    private final int x;
+    private final int z;
 
     public Chunk(int x, int z) {
         this.x = x;
@@ -21,6 +22,19 @@ public class Chunk implements ConfigurationSerializable {
     public Chunk(Map<String, Object> map) {
         x = (int) map.get("x");
         z = (int) map.get("z");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Chunk chunk = (Chunk) o;
+        return x == chunk.x && z == chunk.z;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, z);
     }
 
     @Override
