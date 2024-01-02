@@ -99,29 +99,29 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
                 case "id" -> {
                     boolean deleted = Territoriality.deleteTerritoryById(data);
                     if (deleted) {
-                        sender.sendMessage("Territory deleted");
+                        sender.sendMessage(ChatColor.GOLD + "Territory deleted");
                     } else {
-                        sender.sendMessage("Cannot delete the territory with that id");
+                        sender.sendMessage(ChatColor.RED + "Cannot delete the territory with that id");
                     }
                 }
                 case "owner" -> {
                     OfflinePlayer offlinePlayer = Arrays.stream(Bukkit.getOfflinePlayers()).filter(player -> player.getName() != null && player.getName().equals(data)).findFirst().orElse(null);
                     if (offlinePlayer == null) {
-                        sender.sendMessage("Cannot find the player named: " + data);
+                        sender.sendMessage(ChatColor.RED + "Cannot find the player named: " + data);
                     } else {
                         boolean deleted = Territoriality.deleteTerritoryByOwnerId(offlinePlayer.getUniqueId().toString());
                         if (deleted) {
-                            sender.sendMessage("Territory deleted for owner: " + data);
+                            sender.sendMessage(ChatColor.GOLD + "Territory deleted for owner: " + data);
                         } else {
-                            sender.sendMessage("Cannot delete that territory");
+                            sender.sendMessage(ChatColor.RED + "Cannot delete that territory");
                         }
                     }
                 }
             }
         } else {
             if (!(sender instanceof Player player)) {
-                sender.sendMessage("This command is for player");
-                sender.sendMessage("But you can use /delete <id|owner> <value>");
+                sender.sendMessage(ChatColor.GOLD + "This command is for player");
+                sender.sendMessage(ChatColor.GOLD + "But you can use /delete <id|owner> <value>");
                 return true;
             }
 
@@ -159,8 +159,8 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
     }
 
     private boolean helpCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage("Usage of the command /tmc:");
-        sender.sendMessage("    register - Register the user as landowner.");
+        sender.sendMessage(ChatColor.GOLD + "Usage of the command /tmc:");
+        sender.sendMessage(ChatColor.GOLD + "    register - Register the user as landowner.");
         return true;
     }
 }
