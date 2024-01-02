@@ -32,6 +32,8 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         ConfigurationSerialization.registerClass(Plot.class);
         ConfigurationSerialization.registerClass(Member.class);
         ConfigurationSerialization.registerClass(Territory.class);
+        ConfigurationSerialization.registerClass(MainPlot.class);
+        ConfigurationSerialization.registerClass(ExtensionPlot.class);
 
         reloadConfig();
 
