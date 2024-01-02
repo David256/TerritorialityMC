@@ -1,58 +1,57 @@
 package co.superstuff;
-import co.superstuff.classes.Member;
-import co.superstuff.classes.PersistentManager;
-import co.superstuff.classes.Territory;
+import co.superstuff.classes.*;
 import co.superstuff.commands.CommandTMC;
-import co.superstuff.utils.plugin.CustomConfig;
-import org.bukkit.Bukkit;
+import co.superstuff.events.OnPutTerritoryTurret;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.MemorySection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class TerritorialityMCPlugin extends JavaPlugin {
+    public static String TERRITORY_TURRET_GENERATOR_ID = "territory_generator";
+    public static String TERRITORIES_FILENAME = "territories.yml";
+    public static String MEMBERS_FILENAME = "members.yml";
     private static TerritorialityMCPlugin instance;
-
-    CommandTMC commandTMC;
-
-    private List<Territory> territories;
-    private List<Member> members;
-    private PersistentManager territoryPersistentManager;
-    private PersistentManager memberPersistentManager;
+    private YamlConfiguration territoryPersistent = null;
+    private YamlConfiguration memberPersistent = null;
 
     @Override
     public void onEnable() {
         instance = this;
         System.out.println("Territoriality is on");
 
-        territories = new ArrayList<>();
-        members = new ArrayList<>();
+        ConfigurationSerialization.registerClass(Chunk.class);
+        ConfigurationSerialization.registerClass(Plot.class);
+        ConfigurationSerialization.registerClass(Member.class);
+        ConfigurationSerialization.registerClass(Territory.class);
 
-        territoryPersistentManager = new PersistentManager(new File(getDataFolder(), "territories.yml"));
-        memberPersistentManager = new PersistentManager(new File(getDataFolder(), "users.yml"));
+        reloadConfig();
 
-        reloadTerritories();
-        reloadMembers();
+        loadTerritories();
+        loadMembers();
 
-        commandTMC = new CommandTMC(this);
+        CommandTMC commandTMC = new CommandTMC();
 
-        CustomConfig.setUp(this);
-        YamlConfiguration config = CustomConfig.get();
+        FileConfiguration config = getConfig();
+
         int maxTerritories = config.getInt("max-territories");
         System.out.println("max of territories is: " + maxTerritories);
 
         PluginCommand tmcCommand = getCommand("tmc");
-        Objects.requireNonNull(tmcCommand).setExecutor(commandTMC);
-        Objects.requireNonNull(tmcCommand).setTabCompleter(commandTMC);
+        if (tmcCommand != null) {
+            tmcCommand.setExecutor(commandTMC);
+            tmcCommand.setTabCompleter(commandTMC);
+        }
 
-        Runnable runnable = () -> {
-            Bukkit.getServer().broadcastMessage("Pues venga");
-        };
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, runnable, 2L * 20);
+        getServer().getPluginManager().registerEvents(new OnPutTerritoryTurret(), this);
     }
 
     @Override
@@ -60,64 +59,88 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         System.out.println("Territoriality is off");
     }
 
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+
+        saveDefaultConfig();
+
+        FileConfiguration config = getConfig();
+
+        config.addDefault("max-territories", 10);
+
+        config.options().copyDefaults(true);
+
+        saveConfig();
+
+        saveResource("territories.yml", false);
+        saveResource("members.yml", false);
+
+        loadTerritories();
+        loadMembers();
+    }
+
     public static TerritorialityMCPlugin getInstance() {
         return instance;
     }
 
-    public List<Territory> getTerritories() {
-        return territories;
-    }
+    public void loadTerritories() {
+        Logger logger = getLogger();
 
-    public List<Member> getMembers() {
-        return members;
-    }
+        territoryPersistent = YamlConfiguration.loadConfiguration(new File(getDataFolder(), TERRITORIES_FILENAME));
 
-    public PersistentManager getTerritoryPersistentManager() {
-        return territoryPersistentManager;
-    }
+        List<?> rawTerritories = (List<?>) territoryPersistent.get("territories", Territory.class);
 
-    public PersistentManager getMemberPersistentManager() {
-        return memberPersistentManager;
-    }
+        Territoriality.getTerritories().clear();
 
-    public void reloadTerritories() {
-        Set<String> territoryKeySet = territoryPersistentManager.getConfig().getKeys(false);
-        territoryKeySet.forEach(territoryId -> {
-            MemorySection thing = (MemorySection) territoryPersistentManager.getConfig().get(territoryId);
-            if (thing == null) {
-                return;
-            }
-            Map<String, Object> item = thing.getValues(true);
-
-            Territory territory = Territory.fromMap(item);
-            if (territory == null) {
-                System.err.println("Cannot load territory");
-            } else {
-                territories.add(territory);
-                System.out.println("loads territory: " + territory.getName());
+        rawTerritories.forEach(raw -> {
+            if (raw instanceof Territory territory) {
+                Territoriality.getTerritories().add(territory);
             }
         });
 
-        System.out.println(territories.size() + " territories loaded");
+        logger.info(Territoriality.getTerritories().size() + " territories loaded");
     }
 
-    public void reloadMembers() {
-        memberPersistentManager.getConfig().getKeys(false).forEach(memberId -> {
-            MemorySection thing = (MemorySection) memberPersistentManager.getConfig().get(memberId);
-            if (thing == null) {
-                return;
-            }
+    public void saveTerritories() {
+        Logger logger = getLogger();
 
-            Map<String, Object> item = thing.getValues(true);
-            Member member = Member.fromMap(item);
-            if (member == null) {
-                System.err.println("Cannot load member");
-            } else {
-                members.add(member);
-                System.out.println("Loads member: " + member.getName());
+        territoryPersistent.set("territories", Territoriality.getTerritories());
+
+        try {
+            territoryPersistent.save(new File(getDataFolder(), TERRITORIES_FILENAME));
+        } catch (IOException err) {
+            logger.severe("Cannot save territories: " + err.getMessage());
+        }
+    }
+
+    public void loadMembers() {
+        Logger logger = getLogger();
+
+        memberPersistent = YamlConfiguration.loadConfiguration(new File(getDataFolder(), MEMBERS_FILENAME));
+
+        List<?> rawMembers = (List<?>) memberPersistent.get("members", Member.class);
+
+        Territoriality.getMembers().clear();
+
+        rawMembers.forEach(raw -> {
+            if (raw instanceof Member member) {
+                Territoriality.getMembers().add(member);
             }
         });
 
-        System.out.println(members.size() + " members loaded");
+        logger.info(Territoriality.getMembers().size() + " members loaded");
+    }
+
+    public void saveMembers() {
+        Logger logger = getLogger();
+
+        memberPersistent.set("members", Territoriality.getMembers());
+
+        try {
+            memberPersistent.save(new File(getDataFolder(), MEMBERS_FILENAME));
+        } catch (IOException err) {
+            logger.severe("Cannot save members: " + err.getMessage());
+        }
     }
 }

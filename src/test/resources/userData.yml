@@ -1,0 +1,12 @@
+user-100:
+  id: user-100
+  username: username-1
+  territoryId: territory-1
+user-200:
+  id: user-200
+  username: username-2
+  territoryId: territory-1
+user-300:
+  id: user-300
+  username: username-3
+  territoryId: territory-2

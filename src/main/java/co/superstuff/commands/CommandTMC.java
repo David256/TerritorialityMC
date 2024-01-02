@@ -1,88 +1,134 @@
 package co.superstuff.commands;
 
-import co.superstuff.TerritorialityMCPlugin;
-import co.superstuff.classes.Member;
+import co.superstuff.Territoriality;
 import co.superstuff.classes.Territory;
+import co.superstuff.items.TerritoryTurretItem;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandTMC implements CommandExecutor, TabCompleter {
-    private final TerritorialityMCPlugin plugin;
-
-    public CommandTMC(TerritorialityMCPlugin plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] strings) {
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         List<String> hints = new ArrayList<>();
 
-        if (strings.length == 1) {
-            hints.add("register");
-            hints.add("help");
-        } else if (strings.length == 2) {
-            if (strings[0].equals("register")) {
-                hints.add("<territory name>");
+        switch (args.length) {
+            case 1 -> {
+                hints.add("register");
+                hints.add("help");
+                hints.add("delete");
             }
-            System.out.println(strings[0]);
+            case 2 -> {
+                switch (args[0]) {
+                    case "register" -> {
+                        hints.add("<territory name>");
+                    }
+                    case "delete" -> {
+                        hints.add(" ");
+                        hints.add("id");
+                        hints.add("owner");
+                    }
+                }
+            }
+            case 3 -> {
+                if (args[0].equals("delete")) {
+                    switch (args[1]) {
+                        case "id" -> {
+                            hints.add("<id>");
+                        }
+                        case "owner" -> {
+                            hints.add("<owner name>");
+                        }
+                    }
+                }
+            }
         }
 
         return hints;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
-        if (sender instanceof Player player) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+        if (args.length < 1) {
+            helpCommand(sender, command, label, args);
+            return true;
+        }
 
-            if (strings.length == 0) {
-                printUsage(player);
+        String subcommand = args[0];
+
+        return switch (subcommand) {
+            case "register" -> registerCommand(sender, command, label, args);
+            case "delete" -> deleteCommand(sender, command, label, args);
+            case "help" -> helpCommand(sender, command, label, args);
+            default -> false;
+        };
+    }
+
+    private boolean registerCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player player) {
+            return onCommandRegister(player, command, label, args);
+        } else {
+            sender.sendMessage("This command is for player");
+            return true;
+        }
+    }
+
+    private boolean deleteCommand(CommandSender sender, Command command, String label, String[] args) {
+        @Nullable String keyType = null;
+        if (args.length > 1) {
+            keyType = args[1];
+        }
+        @Nullable String data;
+        if (args.length > 2) {
+            data = args[2];
+        } else {
+            data = null;
+        }
+
+        if (keyType != null && data != null) {
+            switch (keyType) {
+                case "id" -> {
+                    boolean deleted = Territoriality.deleteTerritoryById(data);
+                    if (deleted) {
+                        sender.sendMessage("Territory deleted");
+                    } else {
+                        sender.sendMessage("Cannot delete the territory with that id");
+                    }
+                }
+                case "owner" -> {
+                    OfflinePlayer offlinePlayer = Arrays.stream(Bukkit.getOfflinePlayers()).filter(player -> player.getName() != null && player.getName().equals(data)).findFirst().orElse(null);
+                    if (offlinePlayer == null) {
+                        sender.sendMessage("Cannot find the player named: " + data);
+                    } else {
+                        boolean deleted = Territoriality.deleteTerritoryByOwnerId(offlinePlayer.getUniqueId().toString());
+                        if (deleted) {
+                            sender.sendMessage("Territory deleted for owner: " + data);
+                        } else {
+                            sender.sendMessage("Cannot delete that territory");
+                        }
+                    }
+                }
+            }
+        } else {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage("This command is for player");
+                sender.sendMessage("But you can use /delete <id|owner> <value>");
                 return true;
             }
 
-            switch (strings[0]) {
-                case "register":
-                    return onCommandRegister(player, command, s, strings);
-                default:
-                    printUsage(player);
-                    return true;
-            }
-
-
-
-        } else if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage("Only user can call this command");
-        } else if (sender instanceof BlockCommandSender) {
-            System.out.println("The command /register was run by a command block");
-        } else {
-            System.out.println("What");
+            Territoriality.deleteTerritoryByOwner(player);
         }
+
         return true;
-    }
-
-    private Territory registerPlayer(Player player, String territoryName) {
-        player.sendMessage("Registering...");
-
-        // Code here...
-        String ownerId = player.getUniqueId().toString();
-
-        Territory territory = Territory.findByOwnerId(plugin.getTerritoryPersistentManager(), ownerId);
-        if (territory == null) {
-
-            territory = Territory.create(plugin.getTerritoryPersistentManager(), territoryName, player);
-            System.out.println("new territory of " + player.getName() + " called " + territory.getName());
-
-            player.sendMessage("Right, created: " + territory.getName());
-            return territory;
-
-        } else {
-            player.sendMessage(ChatColor.DARK_PURPLE + "You have a territory already");
-            return null;
-
-        }
     }
 
     private boolean onCommandRegister(Player player, Command command, String s, String[] strings) {
@@ -93,24 +139,28 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
         }
 
         String territoryName = String.join(" ", strings);
-        Territory territory = registerPlayer(player, territoryName);
+        Territory territory = Territoriality.createTerritory(player, territoryName);
 
         if (territory != null) {
-            // Join the user to this territory
-            Member member = Member.create(plugin.getMemberPersistentManager(), player, territory);
-            System.out.println("Add as member to " + member.getName());
-
-            plugin.getMembers().add(member);
-            plugin.getTerritories().add(territory);
-
+            player.sendMessage(ChatColor.AQUA + "Territory created");
             player.sendMessage(ChatColor.YELLOW + "You have been joined to " + territory.getName());
+
+            /*
+            Give the user a territory turret generator
+             */
+
+            ItemStack itemStack = TerritoryTurretItem.create(territoryName);
+
+            // Give the user the new item
+            player.getInventory().addItem(itemStack);
         }
 
         return true;
     }
 
-    private void printUsage(Player player) {
-        player.sendMessage("Usage of the command /tmc:");
-        player.sendMessage("    register - Register the user as landowner.");
+    private boolean helpCommand(CommandSender sender, Command command, String label, String[] args) {
+        sender.sendMessage("Usage of the command /tmc:");
+        sender.sendMessage("    register - Register the user as landowner.");
+        return true;
     }
 }

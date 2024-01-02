@@ -1,12 +1,16 @@
 package co.superstuff.classes;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Member implements Mappable, Writable {
+@SerializableAs("Member")
+public class Member implements ConfigurationSerializable {
     private String id;
     private String name;
     private String territoryId;
@@ -17,25 +21,16 @@ public class Member implements Mappable, Writable {
         this.territoryId = territoryId;
     }
 
-    public static Member create(PersistentManager persistent, Player player, Territory territory) {
-        Member member = new Member(
-                player.getUniqueId().toString(),
-                player.getName(),
-                territory.getId()
-        );
-
-        member.write(persistent);
-
-        return member;
+    public Member(Map<String, Object> map) {
+        id = (String) map.get("id");
+        name = (String) map.get("name");
+        territoryId = (String) map.get("territoryId");
     }
 
-    public static Member create(Player player, Territory territory) {
-
-        return new Member(
-                player.getUniqueId().toString(),
-                player.getName(),
-                territory.getId()
-        );
+    public Member(Player player, Territory territory) {
+        id = player.getUniqueId().toString();
+        name = player.getName();
+        territoryId = territory.getId();
     }
 
     @Override
@@ -47,39 +42,25 @@ public class Member implements Mappable, Writable {
                 '}';
     }
 
-    public String getId() {
-        return id;
+    public boolean isPlayer(Player player) {
+        return player.getUniqueId().toString().equals(id);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getTerritoryId() {
         return territoryId;
     }
 
-    public void setTerritoryId(String territoryId) {
-        this.territoryId = territoryId;
-    }
-
     @Override
-    public void write(PersistentManager persistent) {
-        Map<String, Object> map = dumpAsMap();
-        persistent.set(id, map);
-        persistent.reload();
-    }
-
-    @Override
-    public Map<String, Object> dumpAsMap() {
+    @Nonnull
+    public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
 
         map.put("id", id);
@@ -87,20 +68,5 @@ public class Member implements Mappable, Writable {
         map.put("territoryId", territoryId);
 
         return map;
-    }
-
-    @Nullable
-    public static Member fromMap(Map<?, ?> map) {
-        if (map == null) {
-            System.err.println("Member.fromMap receives null");
-            return null;
-        }
-
-        String id = (String) map.get("id");
-        String name = (String) map.get("name");
-        String territoryId = (String) map.get("territoryId");
-
-        return new Member(id, name, territoryId);
-
     }
 }

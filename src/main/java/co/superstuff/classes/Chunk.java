@@ -1,16 +1,26 @@
 package co.superstuff.classes;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Chunk implements Mappable {
+@SerializableAs("Chunk")
+public class Chunk implements ConfigurationSerializable {
     int x;
     int z;
 
     public Chunk(int x, int z) {
         this.x = x;
         this.z = z;
+    }
+
+    public Chunk(Map<String, Object> map) {
+        x = (int) map.get("x");
+        z = (int) map.get("z");
     }
 
     @Override
@@ -25,37 +35,18 @@ public class Chunk implements Mappable {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getZ() {
         return z;
     }
 
-    public void setZ(int z) {
-        this.z = z;
-    }
-
     @Override
-    public Map<String, Object> dumpAsMap() {
+    @Nonnull
+    public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
 
         map.put("x", x);
         map.put("z", z);
 
         return map;
-    }
-
-    @Nullable
-    static public Chunk fromMap(Map<?, ?> map) {
-        if (map == null) {
-            return null;
-        }
-
-        int x = (int) map.get("x");
-        int z = (int) map.get("z");
-
-        return new Chunk(x, z);
     }
 }
