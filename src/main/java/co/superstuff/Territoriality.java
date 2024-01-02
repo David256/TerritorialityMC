@@ -9,23 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Territoriality {
-    private static List<Territory> territories = new ArrayList<>();
-    private static List<Member> members = new ArrayList<>();
+    private static final List<Territory> territories = new ArrayList<>();
+    private static final List<Member> members = new ArrayList<>();
 
     public static List<Territory> getTerritories() {
         return territories;
     }
 
-    public static void setTerritories(List<Territory> territories) {
-        Territoriality.territories = territories;
-    }
-
     public static List<Member> getMembers() {
         return members;
-    }
-
-    public static void setMembers(List<Member> members) {
-        Territoriality.members = members;
     }
 
     public static @Nullable Territory findTerritoryByOwnerId(String ownerId) {
