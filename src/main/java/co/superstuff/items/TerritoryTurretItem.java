@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 
 public class TerritoryTurretItem {
-    public static ItemStack create(@Nullable String territoryName) {
+    public static ItemStack create(String territoryName, String territoryId) {
 
         ItemStack itemStack = new ItemStack(Material.MAP, 1);
 
@@ -28,15 +28,9 @@ public class TerritoryTurretItem {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta != null) {
-            String displayName = "Territory turret";
+            itemMeta.setDisplayName("Blueprint of territorial turret: %s".formatted(territoryName));
 
-            if (territoryName != null) {
-                displayName += ": " + territoryName;
-            }
-
-            itemMeta.setDisplayName(displayName);
-
-            itemMeta.setLore(Arrays.asList("Generator of territory", "Use over the ground to put a territory turret"));
+            itemMeta.setLore(Arrays.asList("Blueprint of territorial turret", "Use over the ground to put a territorial turret"));
 
             // Save this persistent data to identify the item in the using moment
             PersistentDataContainer container = itemMeta.getPersistentDataContainer();
@@ -47,6 +41,15 @@ public class TerritoryTurretItem {
                     ),
                     PersistentDataType.BOOLEAN,
                     true);
+
+            container.set(
+                    new NamespacedKey(
+                            TerritorialityMCPlugin.getInstance(),
+                            "id"
+                    ),
+                    PersistentDataType.STRING,
+                    territoryId
+            );
 
             // Set the item metadata
             itemStack.setItemMeta(itemMeta);
@@ -72,5 +75,22 @@ public class TerritoryTurretItem {
 
         NamespacedKey namespacedKey = new NamespacedKey(TerritorialityMCPlugin.getInstance(), TerritorialityMCPlugin.TERRITORY_TURRET_GENERATOR_ID);
         return Boolean.TRUE.equals(container.get(namespacedKey, PersistentDataType.BOOLEAN));
+    }
+
+    public static @Nullable String getTerritoryId(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return null;
+        }
+
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+
+        NamespacedKey namespacedKey = new NamespacedKey(TerritorialityMCPlugin.getInstance(), "id");
+        String gotId = container.get(namespacedKey, PersistentDataType.STRING);
+        if (gotId == null || gotId.isEmpty()) {
+            return null;
+        }
+        return gotId;
     }
 }

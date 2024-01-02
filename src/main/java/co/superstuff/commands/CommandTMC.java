@@ -149,7 +149,7 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
             Give the user a territory turret generator
              */
 
-            ItemStack itemStack = TerritoryTurretItem.create(territoryName);
+            ItemStack itemStack = TerritoryTurretItem.create(territoryName, territory.getId());
 
             // Give the user the new item
             player.getInventory().addItem(itemStack);

@@ -20,6 +20,14 @@ public class Territoriality {
         return members;
     }
 
+    public static @Nullable Territory findTerritoryById(String id) {
+        return territories
+                .stream()
+                .filter(territory -> territory.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     public static @Nullable Territory findTerritoryByOwnerId(String ownerId) {
         return territories
                 .stream()

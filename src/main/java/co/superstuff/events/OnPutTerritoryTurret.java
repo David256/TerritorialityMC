@@ -1,12 +1,11 @@
 package co.superstuff.events;
 
+import co.superstuff.Territoriality;
 import co.superstuff.TerritorialityMCPlugin;
+import co.superstuff.classes.Territory;
 import co.superstuff.classes.TurretPosition;
 import co.superstuff.items.TerritoryTurretItem;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
@@ -16,10 +15,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -41,6 +38,20 @@ public class OnPutTerritoryTurret implements Listener {
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (TerritoryTurretItem.check(itemInHand)) {
+            @Nullable String territoryId = TerritoryTurretItem.getTerritoryId(itemInHand);
+            if (territoryId == null) {
+                player.sendMessage(ChatColor.GOLD + "item invalid");
+                event.setCancelled(true);
+                return;
+            }
+
+            Territory territory = Territoriality.findTerritoryById(territoryId);
+            if (territory == null) {
+                player.sendMessage("Cannot find the territory if this blueprints");
+                event.setCancelled(true);
+                return;
+            }
+
             logger.info("Put the territory turret here!");
             event.setCancelled(true);
 
@@ -100,6 +111,8 @@ public class OnPutTerritoryTurret implements Listener {
                 Put the rod
                 */
             turretPositions.add(turretPosition);
+
+            player.sendMessage("Place the turret for: " + territory.getName());
         }
     }
 
