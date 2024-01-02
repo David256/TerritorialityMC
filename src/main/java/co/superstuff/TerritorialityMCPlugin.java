@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.*;
 
 public class TerritorialityMCPlugin extends JavaPlugin {
+    private static TerritorialityMCPlugin instance;
 
     CommandTMC commandTMC;
 
@@ -24,6 +25,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         System.out.println("Territoriality is on");
 
         territories = new ArrayList<>();
@@ -56,6 +58,10 @@ public class TerritorialityMCPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         System.out.println("Territoriality is off");
+    }
+
+    public static TerritorialityMCPlugin getInstance() {
+        return instance;
     }
 
     public List<Territory> getTerritories() {
