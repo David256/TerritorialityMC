@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class CommandTMC implements CommandExecutor, TabCompleter {
     @Override
@@ -138,7 +139,11 @@ public class CommandTMC implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        String territoryName = String.join(" ", strings);
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        for (int i = 1; i < strings.length; i++) {
+            stringJoiner.add(strings[i]);
+        }
+        String territoryName = stringJoiner.toString();
         Territory territory = Territoriality.createTerritory(player, territoryName);
 
         if (territory != null) {
