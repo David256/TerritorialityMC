@@ -1,5 +1,6 @@
 package co.superstuff.classes;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -107,7 +108,15 @@ public class Territory implements ConfigurationSerializable {
         return player.getUniqueId().toString().equals(ownerId);
     }
 
-    public void createMainPlot(int x, int z) {
+    /**
+     * Create the main plot and add neighbor {@link Chunk} objects.
+     * The provided coordinates are when the territorial turret will be placed.
+     * @param location The location coordinate.
+     */
+    public void createMainPlot(Location location) {
+        int x = location.getChunk().getX();
+        int z = location.getChunk().getZ();
+
         final int offset = 1;
         List<Chunk> chunks = new ArrayList<>();
         for (int i = -offset; i <= offset; i++) {
@@ -118,8 +127,17 @@ public class Territory implements ConfigurationSerializable {
         }
 
         mainPlot = new MainPlot(x, z, 100, id, chunks);;
-    }
 
+        TerritorialTurret turret = new TerritorialTurret(location);
+
+        // TODO: this method can receive a rotatable config
+        boolean isPlaced = turret.place(null);
+        if (!isPlaced) {
+            System.err.println("Cannot place the territorial turret at: " + location);
+        }
+
+        mainPlot.setTurret(turret);
+    }
 
     @Override
     @Nonnull

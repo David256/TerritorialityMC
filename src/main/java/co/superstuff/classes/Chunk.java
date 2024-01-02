@@ -9,16 +9,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Class to handle the Chunk position that can be belonged by {@link Plot}.
+ */
 @SerializableAs("Chunk")
 public class Chunk implements ConfigurationSerializable {
     private final int x;
     private final int z;
 
+    /**
+     * Constructor.
+     * @param x The X coordinate of this chunk
+     * @param z The Z coordinate of this chunk
+     */
     public Chunk(int x, int z) {
         this.x = x;
         this.z = z;
     }
 
+    /**
+     * Constructor to deserialize the object.
+     * @param map a {@link Map}
+     */
     public Chunk(Map<String, Object> map) {
         x = (int) map.get("x");
         z = (int) map.get("z");

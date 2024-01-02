@@ -5,10 +5,12 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents a territorial member.
+ */
 @SerializableAs("Member")
 public class Member implements ConfigurationSerializable {
     private String id;
@@ -42,6 +44,11 @@ public class Member implements ConfigurationSerializable {
                 '}';
     }
 
+    /**
+     * Check if a given player is the same of this member.
+     * @param player A {@link Player}
+     * @return true if the player is the same.
+     */
     public boolean isPlayer(Player player) {
         return player.getUniqueId().toString().equals(id);
     }

@@ -6,10 +6,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -34,6 +32,7 @@ public class TerritorialityMCPlugin extends JavaPlugin {
         ConfigurationSerialization.registerClass(Territory.class);
         ConfigurationSerialization.registerClass(MainPlot.class);
         ConfigurationSerialization.registerClass(ExtensionPlot.class);
+        ConfigurationSerialization.registerClass(TerritorialTurret.class);
 
         reloadConfig();
 

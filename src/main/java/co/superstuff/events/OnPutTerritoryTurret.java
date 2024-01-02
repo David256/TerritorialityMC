@@ -2,14 +2,11 @@ package co.superstuff.events;
 
 import co.superstuff.Territoriality;
 import co.superstuff.TerritorialityMCPlugin;
+
 import co.superstuff.classes.Territory;
-import co.superstuff.classes.TurretPosition;
 import co.superstuff.items.TerritoryTurretItem;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,17 +14,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.logging.Logger;
 
 public class OnPutTerritoryTurret implements Listener {
-
-    private final ArrayList<TurretPosition> turretPositions;
-
-    public OnPutTerritoryTurret() {
-        turretPositions = new ArrayList<>();
-    }
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
@@ -91,81 +81,20 @@ public class OnPutTerritoryTurret implements Listener {
                 return;
             }
 
-            TurretPosition turretPosition = new TurretPosition(block.getX(), block.getZ());
-            if (turretPositions.contains(turretPosition)) {
-                System.out.println("Stop twice calling");
-                return;
+            // bannerBlock.setBlockData(TerritoryUtil.getBannerRotation(bannerBlock, player));
+
+            if (territory.getMainPlot() == null) {
+                territory.createMainPlot(block.getLocation());
+                logger.info("set the main plot");
+                TerritorialityMCPlugin.getInstance().saveTerritories();
             }
-
-            world.getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.STONE_BRICKS);
-            world.getBlockAt(block.getX(), block.getY()+1, block.getZ()).setType(Material.STONE_BRICK_WALL);
-//                world.getBlockAt(block.getX(), block.getY()+2, block.getZ()).setType(Material.WHITE_BANNER);
-            Block bannerBlock = world.getBlockAt(block.getX(), block.getY()+2, block.getZ());
-            bannerBlock.setType(Material.WHITE_BANNER);
-
-            bannerBlock.setBlockData(getBannerRotation(bannerBlock, player));
-
-            putLightingRods(block, world);
-
-                /*
-                Put the rod
-                */
-            turretPositions.add(turretPosition);
+            // TODO: set other type of plots
 
             player.sendMessage("Place the turret for: " + territory.getName());
         }
     }
 
-    private void putLightingRods(Block block, World world) {
-        Block rodBlock;
-        Directional directional;
 
-        // Put a lighting rod at east
-        rodBlock = world.getBlockAt(block.getX()+1, block.getY(), block.getZ());
-        rodBlock.setType(Material.LIGHTNING_ROD);
-        directional = ((Directional) rodBlock.getBlockData());
-        directional.setFacing(BlockFace.EAST);
-        rodBlock.setBlockData(directional);
-        // Put a lighting rod at west
-        rodBlock = world.getBlockAt(block.getX()-1, block.getY(), block.getZ());
-        rodBlock.setType(Material.LIGHTNING_ROD);
-        directional = ((Directional) rodBlock.getBlockData());
-        directional.setFacing(BlockFace.WEST);
-        rodBlock.setBlockData(directional);
-        // Put a lighting rod at south
-        rodBlock = world.getBlockAt(block.getX(), block.getY(), block.getZ()+1);
-        rodBlock.setType(Material.LIGHTNING_ROD);
-        directional = ((Directional) rodBlock.getBlockData());
-        directional.setFacing(BlockFace.SOUTH);
-        rodBlock.setBlockData(directional);
-        // Put a lighting rod at north
-        rodBlock = world.getBlockAt(block.getX(), block.getY(), block.getZ()-1);
-        rodBlock.setType(Material.LIGHTNING_ROD);
-        directional = ((Directional) rodBlock.getBlockData());
-        directional.setFacing(BlockFace.NORTH);
-        rodBlock.setBlockData(directional);
-    }
 
-    private static Rotatable getBannerRotation(Block bannerBlock, Player player) {
-        Rotatable rotatable = ((Rotatable) bannerBlock.getBlockData());
-        Location location = player.getEyeLocation();
 
-        double rotationDegree = (location.getYaw() - 90) % 360;
-        if (rotationDegree < 0) {
-            rotationDegree += 360.0;
-        }
-        System.out.println("rotationDegree: " + rotationDegree);
-        if (rotationDegree >= 45 && rotationDegree < 135) {
-            rotatable.setRotation(BlockFace.NORTH);
-
-        } else if (rotationDegree >= 135 && rotationDegree < 225) {
-            rotatable.setRotation(BlockFace.WEST);
-        } else if (rotationDegree >= 225 && rotationDegree < 315) {
-            rotatable.setRotation(BlockFace.EAST);
-        } else {
-            rotatable.setRotation(BlockFace.SOUTH);
-        }
-
-        return rotatable;
-    }
 }
