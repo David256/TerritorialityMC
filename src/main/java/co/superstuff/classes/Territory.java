@@ -98,6 +98,19 @@ public class Territory implements ConfigurationSerializable {
         return player.getUniqueId().toString().equals(ownerId);
     }
 
+    public void createMainPlot(int x, int z) {
+        final int offset = 1;
+        List<Chunk> chunks = new ArrayList<>();
+        for (int i = -offset; i <= offset; i++) {
+            for (int j = -offset; j <= offset; j++) {
+                chunks.add(new Chunk(x + i, z + j));
+            }
+
+        }
+
+        mainPlot = new MainPlot(x, z, 100, id, chunks);;
+    }
+
 
     @Override
     @Nonnull
