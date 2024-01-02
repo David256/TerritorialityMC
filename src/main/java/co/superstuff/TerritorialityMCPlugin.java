@@ -73,8 +73,8 @@ public class TerritorialityMCPlugin extends JavaPlugin {
 
         saveConfig();
 
-        saveResource("territories.yml", false);
-        saveResource("members.yml", false);
+        saveResource(TERRITORIES_FILENAME, false);
+        saveResource(MEMBERS_FILENAME, false);
 
         loadTerritories();
         loadMembers();
