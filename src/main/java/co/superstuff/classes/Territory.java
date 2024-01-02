@@ -13,7 +13,7 @@ public class Territory implements ConfigurationSerializable {
     private String id;
     private String name;
     private String ownerId;
-    private MainPlot mainPlot;
+    private @Nullable MainPlot mainPlot;
     private List<ExtensionPlot> extensionPlots;
     private List<Member> members;
 
@@ -92,6 +92,15 @@ public class Territory implements ConfigurationSerializable {
 
     public String getOwnerId() {
         return ownerId;
+    }
+
+    @Nullable
+    public MainPlot getMainPlot() {
+        return mainPlot;
+    }
+
+    public void setMainPlot(@Nullable MainPlot mainPlot) {
+        this.mainPlot = mainPlot;
     }
 
     public boolean isPlayerOwner(Player player) {
