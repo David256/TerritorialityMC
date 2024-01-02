@@ -70,6 +70,8 @@ public class Territory implements Mappable, Writable {
     public void write(PersistentManager persistent) {
         Map<String, Object> map = dumpAsMap();
         persistent.set(id, map);
+        // Fixed: now save
+        persistent.save();
         persistent.reload();
     }
 
