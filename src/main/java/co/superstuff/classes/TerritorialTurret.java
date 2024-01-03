@@ -38,6 +38,11 @@ public class TerritorialTurret implements ConfigurationSerializable {
         this.location = location;
     }
 
+    /**
+     * Only place a territorial turret replace at location.
+     * @param rotatable The rotatable config.
+     * @return true if the turret was placed.
+     */
     public boolean place(@Nullable Rotatable rotatable) {
         World world = location.getWorld();
         Block block = location.getBlock();
