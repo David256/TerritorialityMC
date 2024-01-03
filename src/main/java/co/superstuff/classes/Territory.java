@@ -1,5 +1,6 @@
 package co.superstuff.classes;
 
+import co.superstuff.TerritorialityMCPlugin;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.logging.Logger;
 
 @SerializableAs("Territory")
 public class Territory implements ConfigurationSerializable {
@@ -113,10 +115,31 @@ public class Territory implements ConfigurationSerializable {
      * The provided coordinates are when the territorial turret will be placed.
      * @param location The location coordinate.
      */
-    public void createMainPlot(Location location) {
+    public MainPlot createMainPlot(Location location) {
         int x = location.getChunk().getX();
         int z = location.getChunk().getZ();
 
+        List<Chunk> chunks = getChunkAround(x, z);
+
+        mainPlot = new MainPlot(x, z, 100, id, chunks);;
+
+        return mainPlot;
+    }
+
+    public ExtensionPlot createExternalPlot(Location location) {
+        int x = location.getChunk().getX();
+        int z = location.getChunk().getZ();
+
+        List<Chunk> chunks = getChunkAround(x, z);
+
+        ExtensionPlot extensionPlot = new ExtensionPlot(x, z, 100, id, chunks);;
+
+        extensionPlots.add(extensionPlot);
+
+        return extensionPlot;
+    }
+
+    private List<Chunk> getChunkAround(int x, int z) {
         final int offset = 1;
         List<Chunk> chunks = new ArrayList<>();
         for (int i = -offset; i <= offset; i++) {
@@ -125,18 +148,92 @@ public class Territory implements ConfigurationSerializable {
             }
 
         }
+        return chunks;
+    }
 
-        mainPlot = new MainPlot(x, z, 100, id, chunks);;
+    public boolean placeTurret(Location location) {
+        Logger logger = TerritorialityMCPlugin.getInstance().getLogger();
 
-        TerritorialTurret turret = new TerritorialTurret(location);
-
-        // TODO: this method can receive a rotatable config
-        boolean isPlaced = turret.place(null);
-        if (!isPlaced) {
-            System.err.println("Cannot place the territorial turret at: " + location);
+        if (!checkChunkFree(location)) {
+            logger.warning("Location at %s is busy".formatted(location));
+            return false;
         }
 
-        mainPlot.setTurret(turret);
+        Chunk chunk = new Chunk(location.getChunk().getX(), location.getChunk().getZ());
+
+        if (mainPlot == null) {
+            logger.warning("main plot is null - will create it");
+            // no main plot created yet
+            // Place the turret
+            TerritorialTurret turret = new TerritorialTurret(location);
+            boolean isPlaced = turret.place(null);
+            if (!isPlaced) {
+                logger.warning("Cannot place the territorial turret at: " + location);
+                return false;
+            }
+
+            mainPlot = createMainPlot(location);
+            mainPlot.setTurret(turret);
+            logger.info("main plot created - turret set");
+        } else {
+            if (!mainPlot.contains(chunk)) {
+                logger.info("main plot does not have the chunk %s".formatted(chunk));
+                // Place the turret
+                TerritorialTurret turret = new TerritorialTurret(location);
+                boolean isPlaced = turret.place(null);
+                if (!isPlaced) {
+                    logger.warning("Cannot place the territorial turret at: " + location);
+                    return false;
+                }
+                return true;
+            } else {
+                // Check for external plots
+                if (extensionPlots.stream().anyMatch(plot -> plot.chunks.contains(chunk))) {
+                    logger.warning("MainPlot does not have this chunk - but yes a external plot");
+                    return false;
+                }
+
+                logger.info("will add an external plot");
+
+                TerritorialTurret turret = new TerritorialTurret(location);
+                boolean isPlaced = turret.place(null);
+                if (!isPlaced) {
+                    logger.warning("Cannot place the territorial turret at: " + location);
+                    return false;
+                }
+
+                ExtensionPlot extensionPlot = createExternalPlot(location);
+                extensionPlot.setTurret(turret);
+
+                logger.info("new external plot added: %s".formatted(extensionPlot));
+
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the chunk at that location is free.
+     * @param location The location where the chunk could be placed.
+     * @return true if the chunk is free.
+     */
+    private boolean checkChunkFree(Location location) {
+        Chunk currentChunk = new Chunk(location.getChunk().getX(), location.getChunk().getZ());
+
+        if (mainPlot != null) {
+            if (!mainPlot.chunks.contains(currentChunk)) {
+                return true;
+            }
+        }
+
+        if (!extensionPlots.isEmpty()) {
+            if (extensionPlots.stream().noneMatch(plot -> plot.getChunks().contains(currentChunk))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
