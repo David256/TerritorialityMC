@@ -83,14 +83,16 @@ public class OnPutTerritoryTurret implements Listener {
 
             // bannerBlock.setBlockData(TerritoryUtil.getBannerRotation(bannerBlock, player));
 
-            if (territory.getMainPlot() == null) {
-                territory.createMainPlot(block.getLocation());
+            boolean success = territory.placeTurret(block.getLocation());
+            if (success) {
                 logger.info("set the main plot");
                 TerritorialityMCPlugin.getInstance().saveTerritories();
+            } else {
+                player.sendMessage(ChatColor.RED + "Cannot place the turret here - maybe this chunk is registered yet");
+                return;
             }
-            // TODO: set other type of plots
 
-            player.sendMessage("Place the turret for: " + territory.getName());
+            player.sendMessage(ChatColor.AQUA + "Place the turret for: " + ChatColor.LIGHT_PURPLE + territory.getName());
         }
     }
 
