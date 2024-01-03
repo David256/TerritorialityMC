@@ -12,11 +12,11 @@ import java.util.Map;
 
 @SerializableAs("Plot")
 abstract public class Plot implements ConfigurationSerializable {
-    int x;
-    int z;
-    int life;
-    @Nullable TerritorialTurret turret;
-    List<Chunk> chunks;
+    protected int x;
+    protected int z;
+    protected int life;
+    protected @Nullable TerritorialTurret turret;
+    protected List<Chunk> chunks;
     String territoryId;
 
     public Plot(int x, int z, int life, String territoryId) {
@@ -62,6 +62,10 @@ abstract public class Plot implements ConfigurationSerializable {
                 ", chunks.size()=" + chunks.size() +
                 ", territoryId='" + territoryId + '\'' +
                 '}';
+    }
+
+    public boolean contains(Chunk chunk) {
+        return chunks.contains(chunk);
     }
 
     public double calcOverlap(Plot plot) {
